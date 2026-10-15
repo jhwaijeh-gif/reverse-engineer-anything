@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- ============================================================ -->
+<!-- SLOT:TITLE - byt ut hela title-texten. Format:               -->
+<!-- "Guidens namn · kort beskrivning | @joudgor"                 -->
+<!-- Separator ar middot (·), aldrig tankstreck. Nagra aldre      -->
+<!-- live-guider har tankstreck i titeln: kopiera INTE det.       -->
+<!-- ============================================================ -->
+<title>Testa skillen Reverse Engineer Anything · steg för steg | @joudgor</title>
+
+<!-- ============================================================ -->
+<!-- SLOT:META_DESCRIPTION - 1-2 meningar på svenska om vad       -->
+<!-- läsaren får. Konkret, inga hype-ord, inga utropstecken.      -->
+<!-- ============================================================ -->
+<meta name="description" content="En kille byggde om Adobes program med AI och gav bort dem. Så gjorde han, och så testar du själv skillen Reverse Engineer Anything: installation, användning och reglerna.">
+
+<!-- ============================================================ -->
+<!-- SLOT:OG - og:title = kort variant av titeln,                 -->
+<!-- og:description = en mening. Lägg till og:image endast om     -->
+<!-- guiden har en bra hero-bild i repot.                         -->
+<!-- ============================================================ -->
+<meta property="og:title" content="Testa skillen Reverse Engineer Anything">
+<meta property="og:description" content="Adobe-historien och skillen du kan testa själv, steg för steg.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F7F6F3; --bg-alt:#FBFBFA; --surface:#FFFFFF; --border:#EAEAEA; --border-soft:rgba(0,0,0,0.06);
+    --ink:#1F1D1B; --text:#3D3A36; --muted:#787774; --cta:#141210;
+    --red-bg:#FDEBEC; --red-tx:#9F2F2D;
+    --blue-bg:#E1F3FE; --blue-tx:#1F6C9F;
+    --green-bg:#EDF3EC; --green-tx:#346538;
+    --yellow-bg:#FBF3DB; --yellow-tx:#956400;
+    --cloth-bg:#FBECE1; --cloth-tx:#B4481F;
+    --brand:#1A6BFF; --brand-dk:#1457E0;
+    --logo:'Syne','Manrope',sans-serif;
+    --serif:'Playfair Display',Georgia,serif;
+    --sans:'Manrope','Helvetica Neue',system-ui,-apple-system,sans-serif;
+    --mono:'JetBrains Mono','SF Mono',monospace;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;background:var(--bg);}
+  body{background:var(--bg);color:var(--text);font-family:var(--sans);font-weight:400;line-height:1.6;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 32px;}
+  .narrow{max-width:780px;}
+  .ambient{position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(620px 420px at 78% -6%, rgba(173,140,90,0.05), rgba(173,140,90,0) 70%);}
+  .page{position:relative;z-index:1;}
+
+  /* NAV */
+  nav{position:sticky;top:0;z-index:50;background:rgba(247,246,243,0.72);
+    backdrop-filter:saturate(150%) blur(12px);border-bottom:1px solid var(--border);}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;transition:opacity .2s ease;}
+  .brand:hover{opacity:.65;}
+  .brand .mk{width:26px;height:26px;border-radius:7px;background:#1A6BFF;display:flex;align-items:center;justify-content:center;}
+  .brand .mk span{color:#fff;font-family:var(--logo);font-weight:800;font-size:15px;line-height:1;}
+  .brand b{font-family:var(--logo);font-weight:800;font-size:17px;color:var(--ink);letter-spacing:-0.01em;}
+  nav .handle{font-family:var(--mono);font-weight:500;font-size:12.5px;color:var(--muted);letter-spacing:0.02em;}
+
+  /* HERO */
+  header.hero{padding:96px 0 36px;}
+  .eyebrow{font-family:var(--mono);font-weight:600;font-size:12px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);}
+  h1{font-family:var(--serif);font-weight:600;color:var(--ink);font-size:clamp(38px,6vw,66px);line-height:1.04;letter-spacing:-0.03em;margin:22px 0 0;}
+  h1 em{font-style:italic;font-weight:500;color:var(--cloth-tx);}
+  .lede{font-size:19px;line-height:1.65;color:var(--text);margin-top:26px;max-width:680px;}
+  .lede b{color:var(--ink);font-weight:600;}
+
+  /* META PILLS */
+  .fmt{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px;}
+  .fmt span{font-family:var(--mono);font-weight:600;font-size:11px;letter-spacing:0.04em;
+    color:var(--muted);background:var(--surface);border:1px solid var(--border);border-radius:9999px;padding:7px 14px;}
+
+  /* FIGURE / SCREENSHOT */
+  .fig{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface);margin-top:16px;}
+  .fig img{width:100%;display:block;background:#0d0d0f;}
+  .fig .figph{aspect-ratio:16/10;display:flex;flex-direction:column;gap:8px;align-items:center;justify-content:center;
+    color:#6c6873;font-family:var(--mono);font-size:12px;letter-spacing:0.04em;text-align:center;padding:20px;background:#0d0d0f;}
+  .fig .figph svg{width:26px;height:26px;opacity:.5;}
+  .fig figcaption{font-family:var(--mono);font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;padding:10px 14px;}
+  /* INLINE ILLUSTRATIONS (flat editorial SVG). hero = full-width header; in-step = small, centered, SUPPORTING. */
+  .fig.illus{background:#FBFBFA;}
+  .fig.illus svg{width:100%;height:auto;display:block;}
+  .fig.illus figcaption{background:var(--surface);border-top:1px solid var(--border);}
+  .fig.illus.sm{max-width:320px;margin-left:auto;margin-right:auto;}
+  .fig.illus.card{max-width:290px;margin-left:auto;margin-right:auto;}
+  .fig.illus.wide{max-width:560px;margin-left:auto;margin-right:auto;}
+  .fig.illus.hero{border:0;background:transparent;margin-top:30px;}
+  .fig.illus.hero svg{border-radius:14px;}
+
+  /* SECTION SHELL */
+  section{padding:64px 0;}
+  .sec-head{margin-bottom:8px;}
+  h2{font-family:var(--serif);font-weight:600;color:var(--ink);font-size:clamp(27px,3.5vw,38px);line-height:1.1;letter-spacing:-0.02em;}
+  .sec-sub{color:var(--muted);font-size:16px;margin-top:10px;max-width:660px;}
+
+  /* STEPS */
+  .steps{margin-top:20px;}
+  .step{display:grid;grid-template-columns:40px 1fr;gap:18px;padding:30px 0;border-top:1px solid var(--border);}
+  .step:first-child{border-top:0;}
+  .step-n{width:34px;height:34px;border-radius:9999px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-weight:600;font-size:14px;background:var(--cloth-bg);color:var(--cloth-tx);}
+  .step h3{font-family:var(--serif);font-weight:600;font-size:22px;color:var(--ink);letter-spacing:-0.01em;margin-bottom:8px;line-height:1.25;}
+  .step p{font-size:15.5px;color:var(--text);line-height:1.62;}
+  .step p b{color:var(--ink);font-weight:600;}
+  .step p+p{margin-top:10px;}
+  /* Telefon: numret ovanför rubriken så att text och bilder får hela bredden (Judes besked 2026-10-13) */
+  @media(max-width:640px){
+    .step{grid-template-columns:minmax(0,1fr);gap:12px;padding:26px 0;}
+    .step-n{width:30px;height:30px;font-size:13px;}
+  }
+  .kbd{font-family:var(--mono);font-weight:600;font-size:13px;background:var(--bg);border:1px solid var(--border);
+    border-radius:6px;padding:2px 8px;color:var(--ink);}
+  .crumbs{margin-top:14px;display:flex;flex-wrap:wrap;align-items:center;gap:7px;}
+  .crumbs .cb{font-family:var(--mono);font-weight:600;font-size:11.5px;color:var(--cloth-tx);background:var(--cloth-bg);border-radius:7px;padding:6px 11px;}
+  .crumbs .sep{color:var(--muted);font-size:12px;}
+  .note{margin-top:16px;font-size:14.5px;color:var(--text);line-height:1.55;background:var(--yellow-bg);
+    border:1px solid rgba(149,100,0,0.14);border-radius:10px;padding:13px 16px;display:flex;gap:11px;}
+  .note .lb{flex:0 0 auto;color:var(--yellow-tx);}
+  .note .lb svg{width:18px;height:18px;display:block;}
+  .note b{color:var(--yellow-tx);font-weight:600;}
+  .note.blue{background:var(--blue-bg);border-color:rgba(31,108,159,0.16);}
+  .note.blue .lb{color:var(--blue-tx);} .note.blue b{color:var(--blue-tx);}
+
+  /* PROMPT BOX */
+  .prompt{margin-top:18px;border:1px solid #2a2926;border-radius:12px;overflow:hidden;background:#1b1a18;}
+  .prompt-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;
+    background:#232220;border-bottom:1px solid rgba(255,255,255,0.06);}
+  .prompt-bar .lbl{font-family:var(--mono);font-weight:600;font-size:11px;letter-spacing:0.09em;text-transform:uppercase;color:#c9c5bf;}
+  .prompt-copy{font-family:var(--mono);font-weight:600;font-size:11px;color:#e9e6e1;background:rgba(255,255,255,0.08);
+    border:1px solid rgba(255,255,255,0.14);border-radius:7px;padding:6px 12px;cursor:pointer;transition:background .2s ease;flex:0 0 auto;}
+  .prompt-copy:hover{background:rgba(255,255,255,0.18);}
+  .prompt-copy.ok{color:#9fe0a6;border-color:rgba(159,224,166,0.4);}
+  .prompt pre{margin:0;padding:18px;overflow:auto;font-family:var(--mono);font-size:13.5px;line-height:1.7;
+    color:#e7e4df;white-space:pre-wrap;word-break:break-word;}
+
+  /* CTA */
+  .cta{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:56px 48px;text-align:center;}
+  .cta h2{font-size:clamp(25px,3.3vw,35px);}
+  .cta p{color:var(--muted);font-size:16px;margin:14px auto 0;max-width:480px;}
+  .btn{display:inline-block;margin-top:28px;background:var(--cta);color:#fff;text-decoration:none;font-family:var(--sans);
+    font-weight:600;font-size:15px;padding:14px 26px;border-radius:6px;transition:background .2s ease,transform .12s ease;}
+  .btn:hover{background:#332e29;}
+  .btn:active{transform:scale(0.98);}
+  .cta-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:14px;}
+  .cta-btns .btn{margin-top:0;}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--border);}
+  .btn-ghost:hover{background:var(--bg);}
+  .btn-book{display:inline-flex;align-items:center;gap:9px;background:var(--brand);color:#fff;}
+  .btn-book:hover{background:var(--brand-dk);}
+  .btn-book svg{width:18px;height:18px;}
+  .cta-or{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:0.04em;margin-top:18px;}
+
+  /* FLOATING SIDE CTA (not part of the reading flow) */
+  .float-cta{position:fixed;right:22px;bottom:22px;z-index:60;max-width:312px;
+    background:var(--surface);border:1.5px solid var(--brand);
+    border-radius:14px;box-shadow:0 6px 24px rgba(0,0,0,0.10);transition:transform .14s ease,box-shadow .2s ease;}
+  .float-cta:hover{box-shadow:0 10px 30px rgba(0,0,0,0.14);transform:translateY(-2px);}
+  .fc-link{display:flex;align-items:center;gap:14px;text-decoration:none;padding:14px 16px;}
+  .fc-text{display:flex;flex-direction:column;line-height:1.3;}
+  .fc-text b{font-size:14px;color:var(--ink);font-weight:700;}
+  .fc-text span{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .fc-btn{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:600;
+    font-size:11px;color:#fff;background:var(--brand);border-radius:9999px;padding:8px 12px;white-space:nowrap;}
+  .fc-btn svg{width:13px;height:13px;}
+  .fc-close{position:absolute;top:-9px;right:-9px;width:22px;height:22px;border-radius:50%;border:1px solid var(--border);
+    background:var(--surface);color:var(--muted);font-size:14px;line-height:1;cursor:pointer;display:flex;
+    align-items:center;justify-content:center;box-shadow:0 1px 4px rgba(0,0,0,0.12);}
+  .fc-close:hover{color:var(--ink);}
+  @media(max-width:820px){
+    .float-cta{right:12px;left:12px;bottom:12px;max-width:none;}
+    .fc-link{justify-content:space-between;padding:12px 14px;}
+    .fc-text b{font-size:13.5px;}
+  }
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border);padding:34px 0 56px;margin-top:80px;}
+  footer .wrap{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+  footer .h{font-family:var(--mono);font-weight:600;font-size:13px;color:var(--ink);letter-spacing:0.02em;}
+  footer .p{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:0.04em;}
+
+  /* MOTION */
+  .reveal{opacity:0;transform:translateY(12px);}
+  .reveal.in{opacity:1;transform:none;transition:opacity .6s cubic-bezier(0.16,1,0.3,1),transform .6s cubic-bezier(0.16,1,0.3,1);}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;}}
+
+  @media(max-width:820px){
+    .wrap{padding:0 22px;}
+    section{padding:52px 0;}
+    header.hero{padding:64px 0 24px;}
+    .cta{padding:40px 24px;}
+  }
+
+  /* ==========================================================
+     PATTERN-CSS: block fran patterns.md markta "add to <style>"
+     klistras in HAR, sist i style-blocket. Lagg bara till det
+     blocken pa sidan faktiskt kraver.
+     ========================================================== */
+
+  /* FEATURE / CLOSING BOX (anime-video-guiden) */
+  .feat{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:34px;
+    border-top:3px solid var(--cloth-tx);}
+  .feat .ftag{display:inline-block;font-family:var(--mono);font-weight:600;font-size:10.5px;
+    letter-spacing:0.08em;text-transform:uppercase;padding:5px 11px;border-radius:9999px;
+    background:var(--cloth-bg);color:var(--cloth-tx);}
+  .feat h3{font-family:var(--serif);font-weight:600;font-size:25px;color:var(--ink);margin:15px 0 8px;}
+  .feat p{font-size:15.5px;color:var(--text);line-height:1.62;max-width:660px;}
+  @media(max-width:820px){.feat{padding:26px 22px;}}
+  /* Röd notis (patterns.md 3) */
+  .note.red{background:var(--red-bg);border-color:rgba(159,47,45,0.16);}
+  .note.red .lb{color:var(--red-tx);}
+  .note.red b{color:var(--red-tx);}
+  .note a{color:inherit;font-weight:600;}
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<div class="page">
+
+  <!-- NAV: bakad, ror inte -->
+  <nav>
+    <div class="wrap">
+      <a class="brand" href="https://ikapp.ai" target="_blank" rel="noopener">
+        <div class="mk"><span>I</span></div>
+        <b>Ikapp</b>
+      </a>
+      <div class="handle">@joudgor</div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="wrap">
+
+      <!-- ============================================================ -->
+      <!-- SLOT:EYEBROW - kort serietext i versaler, t.ex.              -->
+      <!-- "Saker du kan göra med AI" eller "Tjäna pengar med AI · Del 1" -->
+      <!-- ============================================================ -->
+      <div class="eyebrow reveal">Bygg med AI</div>
+
+      <!-- ============================================================ -->
+      <!-- SLOT:H1 (one <em> phrase) - rubriken har EXAKT en <em>-fras  -->
+      <!-- (kursiv, varm accent). Ex: Hitta en <em>spontan semester</em> med AI -->
+      <!-- ============================================================ -->
+      <h1 class="reveal">Testa skillen <em>själv</em></h1>
+
+      <!-- ============================================================ -->
+      <!-- SLOT:LEDE - 2-4 meningar. Vad läsaren får, konkret siffra    -->
+      <!-- i <b> om det finns en. Inga utropstecken, inga hype-ord.     -->
+      <!-- ============================================================ -->
+      <p class="lede reveal">En kille har byggt om Adobes program med AI och ger bort dem gratis. Nu gör folk samma sak med en gratis skill. <b>Här är historien, skillen och hur du kommer igång.</b></p>
+
+      <!-- ============================================================ -->
+      <!-- SLOT:PILLS - 2-4 korta metapiller: verktyg, tid, format.     -->
+      <!-- ============================================================ -->
+      <div class="fmt reveal">
+        <span>REA</span>
+        <span>Claude Code</span>
+        <span>4 steg</span>
+        <span>Gratis</span>
+      </div>
+
+      <!-- ============================================================ -->
+      <!-- SLOT:HERO_ILLUSTRATION (default: every new guide gets one).   -->
+      <!-- Paste ONE bespoke flat-editorial hero SVG here, in the brand  -->
+      <!-- illustration spec (see SKILL.md ILLUSTRATIONS). Full-width     -->
+      <!-- header, no caption. Delete this figure only if a guide truly   -->
+      <!-- has no fitting concept.                                        -->
+      <!-- ============================================================ -->
+      <figure class="fig illus hero reveal"><svg viewBox="0 0 1040 420" xmlns="http://www.w3.org/2000/svg" role="img"><title>En app undersöks med ett förstoringsglas, och ut kommer din egen version av funktionen</title>
+  <rect x="0" y="0" width="1040" height="420" rx="14" fill="#F7F6F3"/>
+  <rect x="70" y="70" width="360" height="280" rx="14" fill="#FFFFFF" stroke="#1F1D1B" stroke-width="2.4"/>
+  <path d="M70 112h360" stroke="#EAEAEA" stroke-width="2"/>
+  <circle cx="98" cy="91" r="6" fill="#EAEAEA"/><circle cx="118" cy="91" r="6" fill="#EAEAEA"/><circle cx="138" cy="91" r="6" fill="#EAEAEA"/>
+  <rect x="96" y="134" width="90" height="190" rx="8" fill="#F7F6F3"/>
+  <path d="M110 160h60M110 182h48M110 204h56M110 226h40" stroke="#787774" stroke-width="2.4" stroke-linecap="round"/>
+  <rect x="206" y="134" width="200" height="54" rx="8" fill="#FBECE1" stroke="#B4481F" stroke-width="2"/>
+  <path d="M224 161h120" stroke="#B4481F" stroke-width="3" stroke-linecap="round"/>
+  <path d="M206 212h200M206 236h160M206 260h180M206 284h120" stroke="#EAEAEA" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="330" cy="158" r="58" fill="none" stroke="#1F1D1B" stroke-width="5"/>
+  <path d="m372 200 34 34" stroke="#1F1D1B" stroke-width="9" stroke-linecap="round"/>
+  <text x="250" y="390" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" font-weight="700" fill="#787774">APPEN DU GILLAR</text>
+  <path d="M470 210h90" stroke="#1A6BFF" stroke-width="3" stroke-linecap="round"/>
+  <path d="m548 199 13 11-13 11" fill="none" stroke="#1A6BFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="512" y="150" width="100" height="40" rx="20" fill="#FFFFFF" stroke="#B4481F" stroke-width="2"/>
+  <text x="562" y="177" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="18" font-weight="700" fill="#B4481F">REA</text>
+  <rect x="610" y="70" width="360" height="280" rx="14" fill="#FFFFFF" stroke="#B4481F" stroke-width="2.4"/>
+  <path d="M610 112h360" stroke="#FBECE1" stroke-width="2"/>
+  <circle cx="638" cy="91" r="6" fill="#FBECE1"/><circle cx="658" cy="91" r="6" fill="#FBECE1"/><circle cx="678" cy="91" r="6" fill="#FBECE1"/>
+  <rect x="636" y="134" width="308" height="54" rx="8" fill="#FBECE1" stroke="#B4481F" stroke-width="2"/>
+  <path d="M654 161h120" stroke="#B4481F" stroke-width="3" stroke-linecap="round"/>
+  <path d="m890 151 12 12 24-26" fill="none" stroke="#346538" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M636 216h240M636 240h190M636 264h220" stroke="#787774" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>
+  <text x="790" y="390" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="20" font-weight="700" fill="#B4481F">DIN EGEN VERSION</text>
+</svg></figure>
+
+    </div>
+  </header>
+
+  <!-- ============================================================ -->
+  <!-- SLOT:BODY - bygg brodtexten ENDAST av block fran patterns.md. -->
+  <!-- Inga egna paahittade komponenter eller ny styling: valj block  -->
+  <!-- ur patterns.md, klistra in dem har och byt bara ut innehallet.-->
+  <!-- Borja normalt med "Section shell: steg" fran patterns.md.     -->
+  <!-- Pattern-CSS markt "add to <style>" laggs i style-blocket ovan,-->
+  <!-- pattern-JS markt "add to <script>" laggs i scriptet nedan.    -->
+  <!-- ============================================================ -->
+
+    <!-- ADOBE -->
+  <section class="wrap narrow" style="padding-top:8px;margin:0 auto;">
+    <div class="sec-head reveal">
+      <h2>Killen som byggde om Adobe</h2>
+      <div class="sec-sub">Brandon Thomas och ArtCraft-teamet.</div>
+    </div>
+    <p class="reveal" style="font-size:16px;line-height:1.65;margin-top:14px">Brandon Thomas har byggt egna versioner av Adobes program, bland dem Photoshop, Illustrator och Premiere, och lagt ut dem gratis som öppen källkod. Nu är Microsoft Office på tur, med WordCraft, GridCraft och DeckCraft.</p>
+    <figure class="fig reveal">
+      <img src="images/artcraft-adobe.jpg" alt="Brandon Thomas inlägg på X: I've vibe coded replacements to 7 of Adobe's apps in Rust. They're open source, med bilden av apparna PhotoCraft, VectorCraft, FilmCraft, LightCraft, PrintCraft, EffectCraft och DesignCraft" loading="lazy">
+      <figcaption>Brandon Thomas på X · Adobes program, gratis och öppna</figcaption>
+    </figure>
+    <p class="reveal" style="font-size:16px;line-height:1.65;margin-top:14px">Är det stöld? Han har inte rört Adobes kod. Apparna byggs från offentlig dokumentation och hur programmen beter sig, utan Adobes kod, grafik eller filer. Du hittar dem på <a href="https://getartcraft.com/apps" target="_blank" rel="noopener" style="color:var(--brand);font-weight:600">getartcraft.com</a>.</p>
+
+    <div class="sec-head reveal" style="margin-top:44px">
+      <h2>Skillen du kan testa själv</h2>
+      <div class="sec-sub">Reverse Engineer Anything, kort REA.</div>
+    </div>
+    <p class="reveal" style="font-size:16px;line-height:1.65;margin-top:14px">Det här har företag alltid gjort: blir ett program för dyrt, bygger de ett eget. Skillnaden nu är att du och jag kan göra det. Folk gör det redan med en gratis skill som heter Reverse Engineer Anything. En skill är en färdig instruktion som du ger till din AI, och med den här kan din AI ta reda på hur en funktion i en app fungerar och bygga en egen version åt dig.</p>
+    <figure class="fig reveal">
+      <img src="images/rea-readme.jpg" alt="Rubriken i REA:s README: REA, Reverse Engineer Anything. One MCP for reverse engineering across binaries, applications, and runtime behavior." loading="lazy">
+      <figcaption>REA på GitHub · gratis, öppen källkod, MIT-licens</figcaption>
+    </figure>
+    <p class="reveal" style="font-size:16px;line-height:1.65;margin-top:14px">Skillen ligger öppet på <a href="https://github.com/morluto/rea" target="_blank" rel="noopener" style="color:var(--brand);font-weight:600">GitHub</a> och har över 250 000 stjärnor.</p>
+  </section>
+
+  <!-- STEG -->
+  <section class="wrap narrow" style="padding-top:8px;margin:0 auto;">
+    <div class="sec-head reveal">
+      <h2>Så kommer du igång</h2>
+      <div class="sec-sub">Fyra steg. Det första gör du en gång, sedan använder du skillen när du vill.</div>
+    </div>
+
+    <div class="steps">
+
+      <!-- 1 -->
+      <div class="step reveal">
+        <div class="step-n">1</div>
+        <div>
+          <h3>Det här behöver du först</h3>
+          <p>Två saker. <b>Node.js</b>, som du laddar ner gratis på <a href="https://nodejs.org" target="_blank" rel="noopener" style="color:var(--brand);font-weight:600">nodejs.org</a>. Och en <b>AI-agent</b> som kan köra skillen, till exempel Claude Code. Har du inte Claude Code än, så finns <a href="https://jhwaijeh-gif.github.io/installera-claude-code/" target="_blank" rel="noopener" style="color:var(--brand);font-weight:600">min guide för att installera Claude Code</a>.</p>
+          <p>REA fungerar också med Codex, Cursor, Gemini CLI och andra agenter som kan köra lokala MCP-servrar.</p>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="step reveal">
+        <div class="step-n">2</div>
+        <div>
+          <h3>Installera skillen med ett kommando</h3>
+          <p>Öppna terminalen och kör kommandot nedan. Välj din agent, läs igenom ändringarna den föreslår och godkänn. Kommandot lägger in skillen och sparar en kopia av dina gamla inställningar.</p>
+          <div class="prompt">
+            <div class="prompt-bar"><span class="lbl">Kommando · kör i terminalen</span><button class="prompt-copy" type="button">Kopiera</button></div>
+            <pre>npx rea-agents setup</pre>
+          </div>
+          <p>Starta om din agent när det är klart. Först då hittar den skillen.</p>
+          <div class="note red"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span>Hämta bara REA från de officiella källorna: <a href="https://github.com/morluto/rea" target="_blank" rel="noopener">github.com/morluto/rea</a>, <a href="https://rea.tools" target="_blank" rel="noopener">rea.tools</a> och npm-paketet <b>rea-agents</b>. Det finns kopior med nästan samma namn, och de kan innehålla vad som helst.</span></div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="step reveal">
+        <div class="step-n">3</div>
+        <div>
+          <h3>Be din AI undersöka appen</h3>
+          <p>Välj en funktion i en app du gillar och be din agent ta reda på hur den fungerar. REA undersöker appen utan att ha källkoden, förklarar hur funktionen är byggd, visar bevisen och kan bygga en egen version i ditt projekt.</p>
+          <figure class="fig">
+            <img src="images/claude-prompt-bar.png?v=2" alt="Claudes textruta där du skriver till din agent">
+            <figcaption>Steg 3 · Skriv i Claude Code, eller i agenten du installerade REA i</figcaption>
+          </figure>
+          <div class="prompt">
+            <div class="prompt-bar"><span class="lbl">Prompt · skriv till din agent</span><button class="prompt-copy" type="button">Kopiera</button></div>
+            <pre>Förstå hur sökfunktionen i appen Anteckningar fungerar, visa mig bevisen och bygg en liknande funktion i mitt projekt.</pre>
+          </div>
+          <p>Byt ut Anteckningar och sökfunktionen mot appen och funktionen du är ute efter. Exemplet kommer från REA:s egen guide.</p>
+          <div class="note"><span class="lb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg></span><span>JavaScript-, Electron- och .NET-appar fungerar utan extra verktyg. För djupare analys av vanliga installerade program behöver REA ett analysverktyg som Hopper, Ghidra eller IDA, och installationen kan lägga in Hopper åt dig om du godkänner det.</span></div>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="step reveal">
+        <div class="step-n">4</div>
+        <div>
+          <h3>Bygg din egen version, på rätt sätt</h3>
+          <p>Använd det du lär dig för att bygga din egen version av idén. Kopiera inte appens kod, grafik, ljud, logga eller namn. Kolla också appens licens och användarvillkor innan du börjar, för många program förbjuder att man plockar isär dem.</p>
+          <p>Analysen körs på din egen dator. Det enda som lämnar den är det din AI-agent skickar till sin AI-tjänst, som vanligt.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- AVSLUT -->
+  <section style="padding-top:8px">
+    <div class="wrap">
+      <div class="feat reveal">
+        <span class="ftag">Det viktigaste tipset</span>
+        <h3>Börja med en funktion, inte en hel app</h3>
+        <p>Det är lockande att be om en kopia av hela programmet. Du kommer längre om du väljer en sak du saknar eller betalar för, som en sökfunktion, en export eller ett filter, och bygger just den. <b>En funktion som fungerar lär dig mer än en halvfärdig app.</b></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA: bakad konstant, ror inte (id="kontakt", bla bokningsknapp forst) -->
+  <section id="kontakt" style="padding-top:8px">
+    <div class="wrap">
+      <div class="cta reveal">
+        <h2>Vill du lära dig AI, eller veta om ditt företag kan använda det?</h2>
+        <p>Jag hjälper dig komma igång, från första frågan till färdig rutin. Hör av dig så tar vi reda på om och var AI passar för dig eller ditt företag.</p>
+        <a class="btn btn-book" href="https://cal.com/jude-hwaijeh-oix30w/strategisamtal" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Boka ett strategisamtal</a>
+        <div class="cta-or">eller hör av dig direkt</div>
+        <div class="cta-btns">
+          <a class="btn btn-ghost" href="mailto:jude@ikapp.ai">Mejla jude@ikapp.ai</a>
+          <a class="btn btn-ghost" href="https://instagram.com/joudgor">Skriv på Instagram</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER: bakad, ror inte -->
+  <footer>
+    <div class="wrap">
+      <div class="h">@joudgor</div>
+      <div class="p">powered by Ikapp.ai</div>
+    </div>
+  </footer>
+
+  <!-- FLOATING SIDE CTA: bakad konstant, ror inte (workshop-foranmalan) -->
+  <div class="float-cta" id="floatCta">
+    <button class="fc-close" type="button" aria-label="Stäng">&times;</button>
+    <a class="fc-link" href="https://ikapp.ai/live?utm_source=guider&amp;utm_medium=floatcta" target="_blank" rel="noopener">
+      <span class="fc-text">
+        <b>Vill du lära dig AI, eller komma djupare in i Claude?</b>
+        <span>Gå vår live-workshop, Claude på 120 minuter.</span>
+      </span>
+      <span class="fc-btn">Föranmäl dig <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </a>
+  </div>
+
+</div>
+
+<script>
+  (function(){
+    // Smooth reveal: INGEN stagger, triggar tidigt sa fade redan ar igang
+    // nar elementet syns. Andra inte threshold/rootMargin.
+    var els = document.querySelectorAll('.reveal');
+    if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in');});}
+    else{
+      var io = new IntersectionObserver(function(entries){
+        entries.forEach(function(en){
+          if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+        });
+      },{threshold:0, rootMargin:'0px 0px 12% 0px'});
+      els.forEach(function(e){io.observe(e);});
+    }
+
+    // Copy-prompt: Kopiera -> Kopierad
+    document.querySelectorAll('.prompt-copy').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var pre = btn.closest('.prompt').querySelector('pre');
+        var txt = pre.innerText;
+        var done = function(){ btn.textContent='Kopierad'; btn.classList.add('ok'); setTimeout(function(){ btn.textContent='Kopiera'; btn.classList.remove('ok'); },1800); };
+        if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done, function(){ fallback(txt); done(); }); }
+        else { fallback(txt); done(); }
+      });
+    });
+    function fallback(t){ var ta=document.createElement('textarea'); ta.value=t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); }
+
+    // Dismiss floating CTA
+    var fc=document.getElementById('floatCta');
+    if(fc){ var fcc=fc.querySelector('.fc-close'); if(fcc){ fcc.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); fc.style.display='none'; }); } }
+
+    // Pattern-specifik JS fran patterns.md (markt "add to <script>") laggs till HAR.
+  })();
+</script>
+</body>
+</html>
